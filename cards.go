@@ -134,6 +134,18 @@ func (c *Client) DeleteCard(ctx context.Context, cardNumber int) error {
 	return err
 }
 
+func (c *Client) DeleteCardImage(ctx context.Context, cardNumber int) error {
+	endpointURL := fmt.Sprintf("%s/cards/%d/image", c.AccountBaseURL, cardNumber)
+
+	req, err := c.newRequest(ctx, http.MethodDelete, endpointURL, nil)
+	if err != nil {
+		return fmt.Errorf("failed to create delete card image request: %w", err)
+	}
+
+	_, err = c.decodeResponse(req, nil, http.StatusNoContent)
+	return err
+}
+
 func (c *Client) CloseCard(ctx context.Context, cardNumber int) error {
 	endpointURL := fmt.Sprintf("%s/cards/%d/closure", c.AccountBaseURL, cardNumber)
 

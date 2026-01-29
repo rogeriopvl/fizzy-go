@@ -197,6 +197,29 @@ func TestDeleteCard(t *testing.T) {
 	})
 }
 
+func TestDeleteCardImage(t *testing.T) {
+	t.Run("deletes card image on success", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != http.MethodDelete {
+				t.Errorf("expected DELETE, got %s", r.Method)
+			}
+			if r.URL.Path != "/test-account/cards/42/image" {
+				t.Errorf("unexpected path: %s", r.URL.Path)
+			}
+
+			w.WriteHeader(http.StatusNoContent)
+		}))
+		defer server.Close()
+
+		client, _ := NewClient("/test-account", "test-token", WithBaseURL(server.URL))
+		err := client.DeleteCardImage(context.Background(), 42)
+
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+	})
+}
+
 func TestCloseCard(t *testing.T) {
 	t.Run("closes card on success", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
