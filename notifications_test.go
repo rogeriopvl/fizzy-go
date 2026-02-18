@@ -26,7 +26,7 @@ func TestGetNotifications(t *testing.T) {
 		defer server.Close()
 
 		client, _ := NewClient("/test-account", "test-token", WithBaseURL(server.URL))
-		result, err := client.GetNotifications(context.Background())
+		result, err := client.GetNotifications(context.Background(), nil)
 
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)

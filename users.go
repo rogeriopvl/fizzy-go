@@ -41,7 +41,8 @@ func (c *Client) GetUser(ctx context.Context, userID string) (*User, error) {
 }
 
 type UpdateUserPayload struct {
-	Name string `json:"name,omitempty"`
+	Name   string `json:"name,omitempty"`
+	Avatar string `json:"avatar,omitempty"`
 }
 
 func (c *Client) UpdateUser(ctx context.Context, userID string, payload UpdateUserPayload) error {

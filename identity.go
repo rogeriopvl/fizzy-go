@@ -22,3 +22,20 @@ func (c *Client) GetMyIdentity(ctx context.Context) (*GetMyIdentityResponse, err
 
 	return &response, nil
 }
+
+// DeleteSession logs out the current user by deleting the session.
+func (c *Client) DeleteSession(ctx context.Context) error {
+	endpointURL := c.BaseURL + "/session"
+
+	req, err := c.newRequest(ctx, http.MethodDelete, endpointURL, nil)
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	_, err = c.decodeResponse(req, nil, http.StatusNoContent)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

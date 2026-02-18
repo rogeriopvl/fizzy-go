@@ -10,7 +10,7 @@ import (
 // ErrNoBoardSelected is returned when an operation requires a board but none is set.
 var ErrNoBoardSelected = errors.New("no board selected: use SetBoard or WithBoard when creating the client")
 
-func (c *Client) GetCards(ctx context.Context, filters CardFilters) ([]Card, error) {
+func (c *Client) GetCards(ctx context.Context, filters *CardFilters) ([]Card, error) {
 	endpointURL := c.AccountBaseURL + "/cards"
 
 	req, err := c.newRequest(ctx, http.MethodGet, endpointURL, nil)
@@ -20,52 +20,53 @@ func (c *Client) GetCards(ctx context.Context, filters CardFilters) ([]Card, err
 
 	q := req.URL.Query()
 
-	for _, id := range filters.BoardIDs {
-		q.Add("board_ids[]", id)
-	}
-	for _, id := range filters.TagIDs {
-		q.Add("tag_ids[]", id)
-	}
-	for _, id := range filters.AssigneeIDs {
-		q.Add("assignee_ids[]", id)
-	}
-	for _, id := range filters.CreatorIDs {
-		q.Add("creator_ids[]", id)
-	}
-	for _, id := range filters.CloserIDs {
-		q.Add("closer_ids[]", id)
-	}
-	for _, id := range filters.CardIDs {
-		q.Add("card_ids[]", id)
-	}
-	for _, term := range filters.Terms {
-		q.Add("terms[]", term)
-	}
-	if filters.IndexedBy != "" {
-		q.Set("indexed_by", filters.IndexedBy)
-	}
-	if filters.SortedBy != "" {
-		q.Set("sorted_by", filters.SortedBy)
-	}
-	if filters.AssignmentStatus != "" {
-		q.Set("assignment_status", filters.AssignmentStatus)
-	}
-	if filters.CreationStatus != "" {
-		q.Set("creation", filters.CreationStatus)
-	}
-	if filters.ClosureStatus != "" {
-		q.Set("closure", filters.ClosureStatus)
+	if filters != nil {
+		for _, id := range filters.BoardIDs {
+			q.Add("board_ids[]", id)
+		}
+		for _, id := range filters.TagIDs {
+			q.Add("tag_ids[]", id)
+		}
+		for _, id := range filters.AssigneeIDs {
+			q.Add("assignee_ids[]", id)
+		}
+		for _, id := range filters.CreatorIDs {
+			q.Add("creator_ids[]", id)
+		}
+		for _, id := range filters.CloserIDs {
+			q.Add("closer_ids[]", id)
+		}
+		for _, id := range filters.CardIDs {
+			q.Add("card_ids[]", id)
+		}
+		for _, term := range filters.Terms {
+			q.Add("terms[]", term)
+		}
+		if filters.IndexedBy != "" {
+			q.Set("indexed_by", filters.IndexedBy)
+		}
+		if filters.SortedBy != "" {
+			q.Set("sorted_by", filters.SortedBy)
+		}
+		if filters.AssignmentStatus != "" {
+			q.Set("assignment_status", filters.AssignmentStatus)
+		}
+		if filters.CreationStatus != "" {
+			q.Set("creation", filters.CreationStatus)
+		}
+		if filters.ClosureStatus != "" {
+			q.Set("closure", filters.ClosureStatus)
+		}
 	}
 
 	req.URL.RawQuery = q.Encode()
 
-	var response []Card
-	_, err = c.decodeResponse(req, &response)
-	if err != nil {
-		return nil, err
+	limit := 0
+	if filters != nil {
+		limit = filters.Limit
 	}
 
-	return response, nil
+	return fetchAllPages[Card](ctx, c, req, limit)
 }
 
 func (c *Client) GetCard(ctx context.Context, cardNumber int) (*Card, error) {

@@ -32,7 +32,7 @@ func TestGetBoards(t *testing.T) {
 		defer server.Close()
 
 		client, _ := NewClient("/test-account", "test-token", WithBaseURL(server.URL))
-		result, err := client.GetBoards(context.Background())
+		result, err := client.GetBoards(context.Background(), nil)
 
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
@@ -53,7 +53,7 @@ func TestGetBoards(t *testing.T) {
 		defer server.Close()
 
 		client, _ := NewClient("/test-account", "test-token", WithBaseURL(server.URL))
-		_, err := client.GetBoards(context.Background())
+		_, err := client.GetBoards(context.Background(), nil)
 
 		if err == nil {
 			t.Fatal("expected error, got nil")

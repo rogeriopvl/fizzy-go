@@ -27,7 +27,7 @@ func TestGetCards(t *testing.T) {
 		defer server.Close()
 
 		client, _ := NewClient("/test-account", "test-token", WithBaseURL(server.URL))
-		result, err := client.GetCards(context.Background(), CardFilters{})
+		result, err := client.GetCards(context.Background(), nil)
 
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
@@ -65,7 +65,7 @@ func TestGetCards(t *testing.T) {
 		defer server.Close()
 
 		client, _ := NewClient("/test-account", "test-token", WithBaseURL(server.URL))
-		_, err := client.GetCards(context.Background(), CardFilters{
+		_, err := client.GetCards(context.Background(), &CardFilters{
 			BoardIDs:  []string{"b1", "b2"},
 			TagIDs:    []string{"tag1"},
 			IndexedBy: "golden",

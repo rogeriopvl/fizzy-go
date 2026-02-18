@@ -26,7 +26,7 @@ func TestGetCardComments(t *testing.T) {
 		defer server.Close()
 
 		client, _ := NewClient("/test-account", "test-token", WithBaseURL(server.URL))
-		result, err := client.GetCardComments(context.Background(), 42)
+		result, err := client.GetCardComments(context.Background(), 42, nil)
 
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)

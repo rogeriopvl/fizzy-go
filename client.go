@@ -106,6 +106,14 @@ func (c *Client) newRequest(ctx context.Context, method, url string, body any) (
 }
 
 func (c *Client) decodeResponse(req *http.Request, v any, expectedStatus ...int) (int, error) {
+	resp, err := c.decodeResponseWithPagination(req, v, expectedStatus...)
+	if err != nil {
+		return 0, err
+	}
+	return resp.StatusCode, nil
+}
+
+func (c *Client) decodeResponseWithPagination(req *http.Request, v any, expectedStatus ...int) (*Response, error) {
 	expectedCode := http.StatusOK
 	if len(expectedStatus) > 0 {
 		expectedCode = expectedStatus[0]
@@ -113,23 +121,26 @@ func (c *Client) decodeResponse(req *http.Request, v any, expectedStatus ...int)
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return 0, fmt.Errorf("failed to make request: %w", err)
+		return nil, fmt.Errorf("failed to make request: %w", err)
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != expectedCode {
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return 0, fmt.Errorf("unexpected status code %d (failed to read error response: %w)", res.StatusCode, err)
+			return nil, fmt.Errorf("unexpected status code %d (failed to read error response: %w)", res.StatusCode, err)
 		}
-		return 0, fmt.Errorf("unexpected status code %d: %s", res.StatusCode, string(body))
+		return nil, fmt.Errorf("unexpected status code %d: %s", res.StatusCode, string(body))
 	}
 
 	if v != nil {
 		if err := json.NewDecoder(res.Body).Decode(v); err != nil {
-			return 0, fmt.Errorf("failed to decode response: %w", err)
+			return nil, fmt.Errorf("failed to decode response: %w", err)
 		}
 	}
 
-	return res.StatusCode, nil
+	return &Response{
+		StatusCode: res.StatusCode,
+		NextURL:    parseNextLink(res.Header.Get("Link")),
+	}, nil
 }

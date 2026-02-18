@@ -63,3 +63,60 @@ func (c *Client) DeleteCommentReaction(ctx context.Context, cardNumber int, comm
 	_, err = c.decodeResponse(req, nil, http.StatusNoContent)
 	return err
 }
+
+func (c *Client) GetCardReactions(ctx context.Context, cardNumber int) ([]Reaction, error) {
+	endpointURL := fmt.Sprintf("%s/cards/%d/reactions", c.AccountBaseURL, cardNumber)
+
+	req, err := c.newRequest(ctx, http.MethodGet, endpointURL, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create get card reactions request: %w", err)
+	}
+
+	var response []Reaction
+	_, err = c.decodeResponse(req, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}
+
+// CreateCardReaction adds a reaction to a card. Returns a Reaction with
+// only the Content field set, as the API only returns a Location header.
+func (c *Client) CreateCardReaction(ctx context.Context, cardNumber int, content string) (*Reaction, error) {
+	endpointURL := fmt.Sprintf("%s/cards/%d/reactions", c.AccountBaseURL, cardNumber)
+
+	payload := map[string]map[string]string{
+		"reaction": {"content": content},
+	}
+
+	req, err := c.newRequest(ctx, http.MethodPost, endpointURL, payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create post card reaction request: %w", err)
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to make request: %w", err)
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusCreated {
+		body, _ := io.ReadAll(res.Body)
+		return nil, fmt.Errorf("unexpected status code %d: %s", res.StatusCode, string(body))
+	}
+
+	return &Reaction{Content: content}, nil
+}
+
+func (c *Client) DeleteCardReaction(ctx context.Context, cardNumber int, reactionID string) error {
+	endpointURL := fmt.Sprintf("%s/cards/%d/reactions/%s", c.AccountBaseURL, cardNumber, reactionID)
+
+	req, err := c.newRequest(ctx, http.MethodDelete, endpointURL, nil)
+	if err != nil {
+		return fmt.Errorf("failed to create delete card reaction request: %w", err)
+	}
+
+	_, err = c.decodeResponse(req, nil, http.StatusNoContent)
+	return err
+}
