@@ -59,3 +59,47 @@ func TestGetMyIdentity(t *testing.T) {
 		}
 	})
 }
+
+func TestCreateAccessToken(t *testing.T) {
+	t.Run("creates an access token on success", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != http.MethodPost {
+				t.Errorf("expected POST, got %s", r.Method)
+			}
+			if r.URL.Path != "/test-account/my/access_tokens" {
+				t.Errorf("unexpected path: %s", r.URL.Path)
+			}
+
+			var body map[string]CreateAccessTokenPayload
+			json.NewDecoder(r.Body).Decode(&body)
+			if body["access_token"].Description != "Fizzy CLI" {
+				t.Errorf("expected description 'Fizzy CLI', got '%s'", body["access_token"].Description)
+			}
+			if body["access_token"].Permission != "write" {
+				t.Errorf("expected permission 'write', got '%s'", body["access_token"].Permission)
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusCreated)
+			json.NewEncoder(w).Encode(PersonalAccessToken{
+				Token:       "secret-token",
+				Description: "Fizzy CLI",
+				Permission:  "write",
+			})
+		}))
+		defer server.Close()
+
+		client, _ := NewClient("/test-account", "test-token", WithBaseURL(server.URL))
+		result, err := client.CreateAccessToken(context.Background(), CreateAccessTokenPayload{
+			Description: "Fizzy CLI",
+			Permission:  "write",
+		})
+
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if result.Token != "secret-token" {
+			t.Errorf("expected created token to be returned, got '%s'", result.Token)
+		}
+	})
+}

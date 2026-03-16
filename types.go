@@ -171,6 +171,17 @@ type Reaction struct {
 	URL     string `json:"url"`
 }
 
+type CreateAccessTokenPayload struct {
+	Description string `json:"description"`
+	Permission  string `json:"permission"`
+}
+
+type PersonalAccessToken struct {
+	Token       string `json:"token"`
+	Description string `json:"description"`
+	Permission  string `json:"permission"`
+}
+
 type EntropyPayload struct {
 	AutoPostponePeriodInDays int `json:"auto_postpone_period_in_days"`
 }
