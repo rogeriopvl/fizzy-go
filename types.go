@@ -105,11 +105,13 @@ type GetMyIdentityResponse struct {
 }
 
 type Account struct {
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	User      User   `json:"user"`
-	Slug      string `json:"slug"`
-	CreatedAt string `json:"created_at"`
+	ID                       string `json:"id"`
+	Name                     string `json:"name"`
+	User                     User   `json:"user"`
+	Slug                     string `json:"slug"`
+	CardsCount               int    `json:"cards_count,omitempty"`
+	CreatedAt                string `json:"created_at"`
+	AutoPostponePeriodInDays int    `json:"auto_postpone_period_in_days,omitempty"`
 }
 
 type User struct {
@@ -167,6 +169,10 @@ type Reaction struct {
 	Content string `json:"content"`
 	Reacter User   `json:"reacter"`
 	URL     string `json:"url"`
+}
+
+type EntropyPayload struct {
+	AutoPostponePeriodInDays int `json:"auto_postpone_period_in_days"`
 }
 
 // Step represents a checklist item on a card.
