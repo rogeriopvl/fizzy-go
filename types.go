@@ -175,6 +175,29 @@ type EntropyPayload struct {
 	AutoPostponePeriodInDays int `json:"auto_postpone_period_in_days"`
 }
 
+type Webhook struct {
+	ID                string   `json:"id"`
+	Name              string   `json:"name"`
+	PayloadURL        string   `json:"payload_url"`
+	Active            bool     `json:"active"`
+	SigningSecret     string   `json:"signing_secret"`
+	SubscribedActions []string `json:"subscribed_actions"`
+	CreatedAt         string   `json:"created_at"`
+	URL               string   `json:"url"`
+	Board             Board    `json:"board"`
+}
+
+type CreateWebhookPayload struct {
+	Name              string   `json:"name"`
+	URL               string   `json:"url"`
+	SubscribedActions []string `json:"subscribed_actions"`
+}
+
+type UpdateWebhookPayload struct {
+	Name              string   `json:"name,omitempty"`
+	SubscribedActions []string `json:"subscribed_actions,omitempty"`
+}
+
 // Step represents a checklist item on a card.
 type Step struct {
 	ID        string `json:"id"`
