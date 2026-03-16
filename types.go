@@ -1,26 +1,28 @@
 package fizzy
 
 type Board struct {
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	AllAccess bool   `json:"all_access"`
-	CreatedAt string `json:"created_at"`
-	URL       string `json:"url"`
-	Creator   User   `json:"creator"`
+	ID                       string `json:"id"`
+	Name                     string `json:"name"`
+	AllAccess                bool   `json:"all_access"`
+	CreatedAt                string `json:"created_at"`
+	AutoPostponePeriodInDays int    `json:"auto_postpone_period_in_days,omitempty"`
+	URL                      string `json:"url"`
+	Creator                  User   `json:"creator"`
+	PublicURL                string `json:"public_url,omitempty"`
 }
 
 type CreateBoardPayload struct {
-	Name               string `json:"name"`
-	AllAccess          bool   `json:"all_access"`
-	AutoPostponePeriod int    `json:"auto_postpone_period"`
-	PublicDescription  string `json:"public_description"`
+	Name                     string `json:"name"`
+	AllAccess                *bool  `json:"all_access,omitempty"`
+	AutoPostponePeriodInDays int    `json:"auto_postpone_period_in_days,omitempty"`
+	PublicDescription        string `json:"public_description,omitempty"`
 }
 
 type UpdateBoardPayload struct {
-	Name               string `json:"name,omitempty"`
-	AllAccess          *bool  `json:"all_access,omitempty"`
-	AutoPostponePeriod *int   `json:"auto_postpone_period,omitempty"`
-	PublicDescription  string `json:"public_description,omitempty"`
+	Name                     string `json:"name,omitempty"`
+	AllAccess                *bool  `json:"all_access,omitempty"`
+	AutoPostponePeriodInDays *int   `json:"auto_postpone_period_in_days,omitempty"`
+	PublicDescription        string `json:"public_description,omitempty"`
 }
 
 type Column struct {
@@ -53,6 +55,7 @@ type Card struct {
 	Description     string   `json:"description"`
 	DescriptionHTML string   `json:"description_html"`
 	ImageURL        string   `json:"image_url"`
+	HasAttachments  bool     `json:"has_attachments"`
 	Tags            []string `json:"tags"`
 	Closed          bool     `json:"closed"`
 	Golden          bool     `json:"golden"`

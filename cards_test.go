@@ -80,7 +80,7 @@ func TestGetCards(t *testing.T) {
 
 func TestGetCard(t *testing.T) {
 	t.Run("returns card on success", func(t *testing.T) {
-		card := Card{ID: "card-1", Number: 42, Title: "Test Card"}
+		card := Card{ID: "card-1", Number: 42, Title: "Test Card", HasAttachments: true}
 
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if r.URL.Path != "/test-account/cards/42" {
@@ -100,6 +100,9 @@ func TestGetCard(t *testing.T) {
 		}
 		if result.Number != 42 {
 			t.Errorf("expected card number 42, got %d", result.Number)
+		}
+		if !result.HasAttachments {
+			t.Error("expected has_attachments to be decoded")
 		}
 	})
 }
