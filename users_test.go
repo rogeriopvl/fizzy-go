@@ -92,6 +92,83 @@ func TestUpdateUser(t *testing.T) {
 	})
 }
 
+func TestDeleteUserAvatar(t *testing.T) {
+	t.Run("deletes avatar on success", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != http.MethodDelete {
+				t.Errorf("expected DELETE, got %s", r.Method)
+			}
+			if r.URL.Path != "/test-account/users/user-1/avatar" {
+				t.Errorf("unexpected path: %s", r.URL.Path)
+			}
+
+			w.WriteHeader(http.StatusNoContent)
+		}))
+		defer server.Close()
+
+		client, _ := NewClient("/test-account", "test-token", WithBaseURL(server.URL))
+		err := client.DeleteUserAvatar(context.Background(), "user-1")
+
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+	})
+}
+
+func TestRequestUserEmailChange(t *testing.T) {
+	t.Run("requests email change on success", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != http.MethodPost {
+				t.Errorf("expected POST, got %s", r.Method)
+			}
+			if r.URL.Path != "/test-account/users/user-1/email_addresses" {
+				t.Errorf("unexpected path: %s", r.URL.Path)
+			}
+
+			var body RequestEmailChangePayload
+			json.NewDecoder(r.Body).Decode(&body)
+			if body.EmailAddress != "new@example.com" {
+				t.Errorf("expected email_address 'new@example.com', got '%s'", body.EmailAddress)
+			}
+
+			w.WriteHeader(http.StatusCreated)
+		}))
+		defer server.Close()
+
+		client, _ := NewClient("/test-account", "test-token", WithBaseURL(server.URL))
+		err := client.RequestUserEmailChange(context.Background(), "user-1", RequestEmailChangePayload{
+			EmailAddress: "new@example.com",
+		})
+
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+	})
+}
+
+func TestConfirmUserEmailChange(t *testing.T) {
+	t.Run("confirms email change on success", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != http.MethodPost {
+				t.Errorf("expected POST, got %s", r.Method)
+			}
+			if r.URL.Path != "/test-account/users/user-1/email_addresses/secret-token/confirmation" {
+				t.Errorf("unexpected path: %s", r.URL.Path)
+			}
+
+			w.WriteHeader(http.StatusNoContent)
+		}))
+		defer server.Close()
+
+		client, _ := NewClient("/test-account", "test-token", WithBaseURL(server.URL))
+		err := client.ConfirmUserEmailChange(context.Background(), "user-1", "secret-token")
+
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+	})
+}
+
 func TestDeactivateUser(t *testing.T) {
 	t.Run("deactivates user on success", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
