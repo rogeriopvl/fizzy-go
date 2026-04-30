@@ -189,6 +189,18 @@ type EntropyPayload struct {
 	AutoPostponePeriodInDays int `json:"auto_postpone_period_in_days"`
 }
 
+type JoinCode struct {
+	Code       string `json:"code"`
+	UsageCount int    `json:"usage_count"`
+	UsageLimit int    `json:"usage_limit"`
+	URL        string `json:"url"`
+	Active     bool   `json:"active"`
+}
+
+type UpdateJoinCodePayload struct {
+	UsageLimit int `json:"usage_limit"`
+}
+
 type Webhook struct {
 	ID                string   `json:"id"`
 	Name              string   `json:"name"`
