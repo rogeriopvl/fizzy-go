@@ -236,6 +236,13 @@ type Webhook struct {
 	Board             Board    `json:"board"`
 }
 
+type Export struct {
+	ID          string `json:"id"`
+	Status      string `json:"status"`
+	CreatedAt   string `json:"created_at"`
+	DownloadURL string `json:"download_url,omitempty"`
+}
+
 type WebhookDelivery struct {
 	ID        string                   `json:"id"`
 	State     string                   `json:"state"`
