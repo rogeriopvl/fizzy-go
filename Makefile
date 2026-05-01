@@ -10,7 +10,7 @@ run:
 	go run .
 
 test:
-	gotestsum -- -v ./...
+	go run gotest.tools/gotestsum@latest -- -v ./...
 
 sync-api-spec:
 	@rm -rf docs/api
