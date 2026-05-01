@@ -103,3 +103,32 @@ func TestCreateAccessToken(t *testing.T) {
 		}
 	})
 }
+
+func TestUpdateMyTimezone(t *testing.T) {
+	t.Run("updates timezone on success", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != http.MethodPatch {
+				t.Errorf("expected PATCH, got %s", r.Method)
+			}
+			if r.URL.Path != "/my/timezone" {
+				t.Errorf("unexpected path: %s", r.URL.Path)
+			}
+
+			var body map[string]string
+			json.NewDecoder(r.Body).Decode(&body)
+			if body["timezone_name"] != "America/New_York" {
+				t.Errorf("expected timezone_name 'America/New_York', got '%s'", body["timezone_name"])
+			}
+
+			w.WriteHeader(http.StatusNoContent)
+		}))
+		defer server.Close()
+
+		client, _ := NewClient("/test-account", "test-token", WithBaseURL(server.URL))
+		err := client.UpdateMyTimezone(context.Background(), "America/New_York")
+
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+	})
+}
