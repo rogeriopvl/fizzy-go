@@ -236,6 +236,39 @@ type Webhook struct {
 	Board             Board    `json:"board"`
 }
 
+type WebhookDelivery struct {
+	ID        string                   `json:"id"`
+	State     string                   `json:"state"`
+	CreatedAt string                   `json:"created_at"`
+	UpdatedAt string                   `json:"updated_at"`
+	Request   *WebhookDeliveryRequest  `json:"request"`
+	Response  *WebhookDeliveryResponse `json:"response"`
+	Event     WebhookDeliveryEvent     `json:"event"`
+}
+
+type WebhookDeliveryRequest struct {
+	Headers map[string]string `json:"headers"`
+}
+
+type WebhookDeliveryResponse struct {
+	Code  int    `json:"code"`
+	Error string `json:"error,omitempty"`
+}
+
+type WebhookDeliveryEvent struct {
+	ID         string                         `json:"id"`
+	Action     string                         `json:"action"`
+	CreatedAt  string                         `json:"created_at"`
+	Creator    User                           `json:"creator"`
+	Eventable  WebhookDeliveryEventEventable  `json:"eventable"`
+}
+
+type WebhookDeliveryEventEventable struct {
+	Type string `json:"type"`
+	ID   string `json:"id"`
+	URL  string `json:"url"`
+}
+
 type CreateWebhookPayload struct {
 	Name              string   `json:"name"`
 	URL               string   `json:"url"`

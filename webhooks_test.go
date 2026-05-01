@@ -205,3 +205,58 @@ func TestActivateWebhook(t *testing.T) {
 		}
 	})
 }
+
+func TestGetWebhookDeliveries(t *testing.T) {
+	t.Run("returns deliveries on success", func(t *testing.T) {
+		deliveries := []WebhookDelivery{
+			{
+				ID:    "delivery-1",
+				State: "completed",
+				Request: &WebhookDeliveryRequest{
+					Headers: map[string]string{"Content-Type": "application/json"},
+				},
+				Response: &WebhookDeliveryResponse{Code: 200},
+				Event: WebhookDeliveryEvent{
+					ID:     "event-1",
+					Action: "card_closed",
+				},
+			},
+			{
+				ID:    "delivery-2",
+				State: "pending",
+			},
+		}
+
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != http.MethodGet {
+				t.Errorf("expected GET, got %s", r.Method)
+			}
+			if r.URL.Path != "/test-account/boards/board-1/webhooks/wh-1/deliveries" {
+				t.Errorf("unexpected path: %s", r.URL.Path)
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(deliveries)
+		}))
+		defer server.Close()
+
+		client, _ := NewClient("/test-account", "test-token", WithBaseURL(server.URL))
+		result, err := client.GetWebhookDeliveries(context.Background(), "board-1", "wh-1", nil)
+
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if len(result) != 2 {
+			t.Fatalf("expected 2 deliveries, got %d", len(result))
+		}
+		if result[0].State != "completed" {
+			t.Errorf("expected first delivery state 'completed', got '%s'", result[0].State)
+		}
+		if result[0].Response == nil || result[0].Response.Code != 200 {
+			t.Errorf("expected first delivery response code 200")
+		}
+		if result[1].Request != nil {
+			t.Errorf("expected second delivery request to be nil")
+		}
+	})
+}

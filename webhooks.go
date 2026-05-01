@@ -89,6 +89,22 @@ func (c *Client) DeleteWebhook(ctx context.Context, boardID, webhookID string) e
 	return err
 }
 
+func (c *Client) GetWebhookDeliveries(ctx context.Context, boardID, webhookID string, opts *ListOptions) ([]WebhookDelivery, error) {
+	endpointURL := fmt.Sprintf("%s/boards/%s/webhooks/%s/deliveries", c.AccountBaseURL, boardID, webhookID)
+
+	req, err := c.newRequest(ctx, http.MethodGet, endpointURL, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create get webhook deliveries request: %w", err)
+	}
+
+	limit := 0
+	if opts != nil {
+		limit = opts.Limit
+	}
+
+	return fetchAllPages[WebhookDelivery](ctx, c, req, limit)
+}
+
 func (c *Client) ActivateWebhook(ctx context.Context, boardID, webhookID string) (*Webhook, error) {
 	endpointURL := fmt.Sprintf("%s/boards/%s/webhooks/%s/activation", c.AccountBaseURL, boardID, webhookID)
 
