@@ -23,3 +23,19 @@ The specs are synced from the upstream `basecamp/fizzy` repo via `make sync-api-
 - Every new feature must ship with tests in the matching `_test.go` file.
 - Every feature gets its own commit using [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `chore:`, `docs:`, etc., with an optional scope like `feat(board): ...`). Don't bundle unrelated features into a single commit.
 - Do not add `Co-Authored-By` trailers (or any other AI-attribution trailer) to commit messages.
+
+## Releases
+
+Releases follow [SemVer](https://semver.org/) and are driven from the [Conventional Commits](https://www.conventionalcommits.org/) made since the previous release tag.
+
+1. Make sure the working tree is clean and `make test` passes. Don't release a red build.
+2. Inspect commits since the last `vX.Y.Z` tag and pick the new version:
+   - `BREAKING CHANGE` footer or `!` after the type → major bump
+   - `feat:` → minor bump
+   - `fix:` / `chore:` / `docs:` / other types → patch bump
+3. Update `CHANGELOG.md` with a new section for the chosen version, summarizing the changes. Review the diff before staging.
+4. Commit the changelog update with `chore(release): vX.Y.Z`.
+5. Create an annotated tag: `git tag -a vX.Y.Z -m "vX.Y.Z"`.
+6. Push the release commit and tag together: `git push --follow-tags`. Tagging a commit that isn't on the remote yet will make the next step (and pkg.go.dev) fail.
+7. Create the GitHub release with `gh release create vX.Y.Z`, using the new `CHANGELOG.md` section as the body (e.g. `--notes-file` pointing at an extracted snippet, or `--notes "$(...)"`).
+8. Warm the Go module proxy so pkg.go.dev picks up the version: `curl https://proxy.golang.org/github.com/rogeriopvl/fizzy-go/@v/vX.Y.Z.info`.
