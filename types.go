@@ -1,5 +1,7 @@
 package fizzy
 
+import "encoding/json"
+
 type Board struct {
 	ID                       string `json:"id"`
 	Name                     string `json:"name"`
@@ -234,6 +236,32 @@ type Webhook struct {
 	CreatedAt         string   `json:"created_at"`
 	URL               string   `json:"url"`
 	Board             Board    `json:"board"`
+}
+
+// Activity represents an entry from the account's activity feed.
+//
+// Particulars and Eventable are deferred-decode (json.RawMessage) because
+// their concrete shape depends on Action and EventableType respectively.
+// EventableType is currently "Card" or "Comment"; clients should handle
+// other values conservatively.
+type Activity struct {
+	ID            string          `json:"id"`
+	Action        string          `json:"action"`
+	CreatedAt     string          `json:"created_at"`
+	Description   string          `json:"description"`
+	Particulars   json.RawMessage `json:"particulars"`
+	URL           string          `json:"url"`
+	EventableType string          `json:"eventable_type"`
+	Eventable     json.RawMessage `json:"eventable"`
+	Board         Board           `json:"board"`
+	Creator       User            `json:"creator"`
+}
+
+// ActivityFilters are query-parameter filters for GetActivities.
+type ActivityFilters struct {
+	CreatorIDs []string
+	BoardIDs   []string
+	Limit      int
 }
 
 type Export struct {
