@@ -156,3 +156,47 @@ func TestDeleteColumn(t *testing.T) {
 		}
 	})
 }
+
+func TestGetColumnCards(t *testing.T) {
+	t.Run("returns column cards on success", func(t *testing.T) {
+		cards := []Card{
+			{ID: "card-1", Title: "First"},
+			{ID: "card-2", Title: "Second"},
+		}
+
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.Path != "/test-account/boards/board-1/columns/col-1/cards" {
+				t.Errorf("unexpected path: %s", r.URL.Path)
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(cards)
+		}))
+		defer server.Close()
+
+		client, _ := NewClient("/test-account", "test-token", WithBaseURL(server.URL), WithBoard("board-1"))
+		result, err := client.GetColumnCards(context.Background(), "col-1", nil)
+
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if len(result) != 2 {
+			t.Fatalf("expected 2 cards, got %d", len(result))
+		}
+		if result[0].Title != "First" {
+			t.Errorf("expected first card title 'First', got '%s'", result[0].Title)
+		}
+	})
+
+	t.Run("returns error when no board selected", func(t *testing.T) {
+		client, _ := NewClient("/test-account", "test-token")
+		_, err := client.GetColumnCards(context.Background(), "col-1", nil)
+
+		if err == nil {
+			t.Fatal("expected error, got nil")
+		}
+		if !errors.Is(err, ErrNoBoardSelected) {
+			t.Errorf("expected ErrNoBoardSelected, got %v", err)
+		}
+	})
+}

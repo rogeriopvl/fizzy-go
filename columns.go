@@ -27,6 +27,26 @@ func (c *Client) GetColumns(ctx context.Context) ([]Column, error) {
 	return response, nil
 }
 
+func (c *Client) GetColumnCards(ctx context.Context, columnID string, opts *ListOptions) ([]Card, error) {
+	if c.BoardBaseURL == "" {
+		return nil, ErrNoBoardSelected
+	}
+
+	endpointURL := c.BoardBaseURL + "/columns/" + columnID + "/cards"
+
+	req, err := c.newRequest(ctx, http.MethodGet, endpointURL, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create get column cards request: %w", err)
+	}
+
+	limit := 0
+	if opts != nil {
+		limit = opts.Limit
+	}
+
+	return fetchAllPages[Card](ctx, c, req, limit)
+}
+
 func (c *Client) GetColumn(ctx context.Context, columnID string) (*Column, error) {
 	if c.BoardBaseURL == "" {
 		return nil, ErrNoBoardSelected
