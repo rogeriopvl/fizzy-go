@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- feat(account): implement join codes (GetAccountJoinCode, UpdateAccountJoinCode, ResetAccountJoinCode)
+- feat(users): implement avatar removal and email address change (DeleteUserAvatar, RequestUserEmailChange, ConfirmUserEmailChange)
+- feat(notifications): implement settings management (GetNotificationSettings, UpdateNotificationSettings)
+- feat(identity): implement timezone update (UpdateMyTimezone)
+- feat(columns): implement card listing per column (GetColumnCards)
+- feat(boards): implement board accesses listing (GetBoardAccesses)
+- feat(webhooks): implement delivery history listing (GetWebhookDeliveries)
+- feat(exports): implement account and user data exports (CreateAccountExport, GetAccountExport, CreateUserDataExport, GetUserDataExport)
+- feat(activities): implement account activity feed (GetActivities)
+
 ## [1.1.0] - 2026-03-16
 
 ### Added
