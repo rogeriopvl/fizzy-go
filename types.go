@@ -201,6 +201,14 @@ type UpdateJoinCodePayload struct {
 	UsageLimit int `json:"usage_limit"`
 }
 
+type NotificationSettings struct {
+	BundleEmailFrequency string `json:"bundle_email_frequency"`
+}
+
+type UpdateNotificationSettingsPayload struct {
+	BundleEmailFrequency string `json:"bundle_email_frequency"`
+}
+
 type Webhook struct {
 	ID                string   `json:"id"`
 	Name              string   `json:"name"`

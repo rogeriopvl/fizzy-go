@@ -131,3 +131,63 @@ func TestMarkAllNotificationsRead(t *testing.T) {
 		}
 	})
 }
+
+func TestGetNotificationSettings(t *testing.T) {
+	t.Run("returns notification settings on success", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != http.MethodGet {
+				t.Errorf("expected GET, got %s", r.Method)
+			}
+			if r.URL.Path != "/test-account/notifications/settings" {
+				t.Errorf("unexpected path: %s", r.URL.Path)
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(NotificationSettings{
+				BundleEmailFrequency: "every_few_hours",
+			})
+		}))
+		defer server.Close()
+
+		client, _ := NewClient("/test-account", "test-token", WithBaseURL(server.URL))
+		result, err := client.GetNotificationSettings(context.Background())
+
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if result.BundleEmailFrequency != "every_few_hours" {
+			t.Errorf("expected bundle_email_frequency 'every_few_hours', got '%s'", result.BundleEmailFrequency)
+		}
+	})
+}
+
+func TestUpdateNotificationSettings(t *testing.T) {
+	t.Run("updates notification settings on success", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != http.MethodPut {
+				t.Errorf("expected PUT, got %s", r.Method)
+			}
+			if r.URL.Path != "/test-account/notifications/settings" {
+				t.Errorf("unexpected path: %s", r.URL.Path)
+			}
+
+			var body map[string]UpdateNotificationSettingsPayload
+			json.NewDecoder(r.Body).Decode(&body)
+			if body["user_settings"].BundleEmailFrequency != "daily" {
+				t.Errorf("expected bundle_email_frequency 'daily', got '%s'", body["user_settings"].BundleEmailFrequency)
+			}
+
+			w.WriteHeader(http.StatusNoContent)
+		}))
+		defer server.Close()
+
+		client, _ := NewClient("/test-account", "test-token", WithBaseURL(server.URL))
+		err := client.UpdateNotificationSettings(context.Background(), UpdateNotificationSettingsPayload{
+			BundleEmailFrequency: "daily",
+		})
+
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+	})
+}
