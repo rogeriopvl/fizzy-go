@@ -282,3 +282,48 @@ func TestUpdateBoardEntropy(t *testing.T) {
 		}
 	})
 }
+
+func TestGetBoardAccesses(t *testing.T) {
+	t.Run("returns board accesses on success", func(t *testing.T) {
+		response := BoardAccesses{
+			BoardID:   "board-1",
+			AllAccess: false,
+			Users: []BoardAccess{
+				{User: User{ID: "user-1", Name: "Alice"}, HasAccess: true, Involvement: "watching"},
+				{User: User{ID: "user-2", Name: "Bob"}, HasAccess: false},
+			},
+		}
+
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != http.MethodGet {
+				t.Errorf("expected GET, got %s", r.Method)
+			}
+			if r.URL.Path != "/test-account/boards/board-1/accesses" {
+				t.Errorf("unexpected path: %s", r.URL.Path)
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(response)
+		}))
+		defer server.Close()
+
+		client, _ := NewClient("/test-account", "test-token", WithBaseURL(server.URL))
+		result, err := client.GetBoardAccesses(context.Background(), "board-1", nil)
+
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if result.BoardID != "board-1" {
+			t.Errorf("expected board_id 'board-1', got '%s'", result.BoardID)
+		}
+		if len(result.Users) != 2 {
+			t.Fatalf("expected 2 users, got %d", len(result.Users))
+		}
+		if !result.Users[0].HasAccess {
+			t.Errorf("expected first user to have access")
+		}
+		if result.Users[0].Involvement != "watching" {
+			t.Errorf("expected first user involvement 'watching', got '%s'", result.Users[0].Involvement)
+		}
+	})
+}

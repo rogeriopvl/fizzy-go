@@ -209,6 +209,21 @@ type UpdateNotificationSettingsPayload struct {
 	BundleEmailFrequency string `json:"bundle_email_frequency"`
 }
 
+// BoardAccess represents a single user's access status to a board.
+type BoardAccess struct {
+	User
+	HasAccess   bool   `json:"has_access"`
+	Involvement string `json:"involvement,omitempty"`
+}
+
+// BoardAccesses is the response from GetBoardAccesses, containing the board
+// metadata and the aggregated list of users across all pages.
+type BoardAccesses struct {
+	BoardID   string        `json:"board_id"`
+	AllAccess bool          `json:"all_access"`
+	Users     []BoardAccess `json:"users"`
+}
+
 type Webhook struct {
 	ID                string   `json:"id"`
 	Name              string   `json:"name"`

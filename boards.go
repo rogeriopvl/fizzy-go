@@ -116,6 +116,51 @@ func (c *Client) UnpublishBoard(ctx context.Context, boardID string) error {
 	return err
 }
 
+func (c *Client) GetBoardAccesses(ctx context.Context, boardID string, opts *ListOptions) (*BoardAccesses, error) {
+	endpointURL := c.AccountBaseURL + "/boards/" + boardID + "/accesses"
+
+	req, err := c.newRequest(ctx, http.MethodGet, endpointURL, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create get board accesses request: %w", err)
+	}
+
+	limit := 0
+	if opts != nil {
+		limit = opts.Limit
+	}
+
+	var result BoardAccesses
+	for {
+		var page BoardAccesses
+		resp, err := c.decodeResponseWithPagination(req, &page)
+		if err != nil {
+			return nil, err
+		}
+
+		if result.BoardID == "" {
+			result.BoardID = page.BoardID
+			result.AllAccess = page.AllAccess
+		}
+		result.Users = append(result.Users, page.Users...)
+
+		if limit > 0 && len(result.Users) >= limit {
+			result.Users = result.Users[:limit]
+			break
+		}
+
+		if resp.NextURL == "" {
+			break
+		}
+
+		req, err = c.newRequest(ctx, http.MethodGet, resp.NextURL, nil)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create next page request: %w", err)
+		}
+	}
+
+	return &result, nil
+}
+
 func (c *Client) UpdateBoardEntropy(ctx context.Context, boardID string, payload EntropyPayload) (*Board, error) {
 	endpointURL := c.AccountBaseURL + "/boards/" + boardID + "/entropy"
 
