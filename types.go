@@ -60,6 +60,7 @@ type Card struct {
 	HasAttachments  bool     `json:"has_attachments"`
 	Tags            []string `json:"tags"`
 	Closed          bool     `json:"closed"`
+	Postponed       bool     `json:"postponed"`
 	Golden          bool     `json:"golden"`
 	LastActiveAt    string   `json:"last_active_at"`
 	CreatedAt       string   `json:"created_at"`

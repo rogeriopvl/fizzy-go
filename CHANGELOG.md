@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(exports): implement account and user data exports (CreateAccountExport, GetAccountExport, CreateUserDataExport, GetUserDataExport)
 - feat(activities): implement account activity feed (GetActivities)
 
+### Fixed
+
+- fix(types): add missing `postponed` field on `Card` so it decodes from `GET /columns/:id/cards` and activity-feed responses
+
 ## [1.1.0] - 2026-03-16
 
 ### Added

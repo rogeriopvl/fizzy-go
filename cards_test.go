@@ -105,6 +105,31 @@ func TestGetCard(t *testing.T) {
 			t.Error("expected has_attachments to be decoded")
 		}
 	})
+
+	t.Run("decodes postponed field", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			w.Write([]byte(`{
+				"id": "card-1",
+				"number": 42,
+				"title": "Test Card",
+				"closed": false,
+				"postponed": true,
+				"golden": false
+			}`))
+		}))
+		defer server.Close()
+
+		client, _ := NewClient("/test-account", "test-token", WithBaseURL(server.URL))
+		result, err := client.GetCard(context.Background(), 42)
+
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if !result.Postponed {
+			t.Error("expected postponed to be decoded as true")
+		}
+	})
 }
 
 func TestCreateCard(t *testing.T) {
