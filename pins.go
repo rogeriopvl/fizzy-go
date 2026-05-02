@@ -34,7 +34,7 @@ func (c *Client) UnpinCard(ctx context.Context, cardNumber int) error {
 
 // GetMyPins returns the current user's pinned cards.
 func (c *Client) GetMyPins(ctx context.Context) ([]Card, error) {
-	endpointURL := c.BaseURL + "/my/pins"
+	endpointURL := c.AccountBaseURL + "/my/pins"
 
 	req, err := c.newRequest(ctx, http.MethodGet, endpointURL, nil)
 	if err != nil {

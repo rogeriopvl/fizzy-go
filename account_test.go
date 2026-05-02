@@ -14,7 +14,7 @@ func TestGetAccountSettings(t *testing.T) {
 			if r.Method != http.MethodGet {
 				t.Errorf("expected GET, got %s", r.Method)
 			}
-			if r.URL.Path != "/account/settings" {
+			if r.URL.Path != "/test-account/account/settings" {
 				t.Errorf("unexpected path: %s", r.URL.Path)
 			}
 
@@ -49,7 +49,7 @@ func TestGetAccountJoinCode(t *testing.T) {
 			if r.Method != http.MethodGet {
 				t.Errorf("expected GET, got %s", r.Method)
 			}
-			if r.URL.Path != "/account/join_code" {
+			if r.URL.Path != "/test-account/account/join_code" {
 				t.Errorf("unexpected path: %s", r.URL.Path)
 			}
 
@@ -91,7 +91,7 @@ func TestUpdateAccountJoinCode(t *testing.T) {
 			if r.Method != http.MethodPut {
 				t.Errorf("expected PUT, got %s", r.Method)
 			}
-			if r.URL.Path != "/account/join_code" {
+			if r.URL.Path != "/test-account/account/join_code" {
 				t.Errorf("unexpected path: %s", r.URL.Path)
 			}
 
@@ -122,7 +122,7 @@ func TestResetAccountJoinCode(t *testing.T) {
 			if r.Method != http.MethodDelete {
 				t.Errorf("expected DELETE, got %s", r.Method)
 			}
-			if r.URL.Path != "/account/join_code" {
+			if r.URL.Path != "/test-account/account/join_code" {
 				t.Errorf("unexpected path: %s", r.URL.Path)
 			}
 
@@ -145,7 +145,7 @@ func TestUpdateAccountEntropy(t *testing.T) {
 			if r.Method != http.MethodPut {
 				t.Errorf("expected PUT, got %s", r.Method)
 			}
-			if r.URL.Path != "/account/entropy" {
+			if r.URL.Path != "/test-account/account/entropy" {
 				t.Errorf("unexpected path: %s", r.URL.Path)
 			}
 

@@ -14,7 +14,7 @@ func TestCreateAccountExport(t *testing.T) {
 			if r.Method != http.MethodPost {
 				t.Errorf("expected POST, got %s", r.Method)
 			}
-			if r.URL.Path != "/account/exports" {
+			if r.URL.Path != "/test-account/account/exports" {
 				t.Errorf("unexpected path: %s", r.URL.Path)
 			}
 
@@ -49,7 +49,7 @@ func TestGetAccountExport(t *testing.T) {
 			if r.Method != http.MethodGet {
 				t.Errorf("expected GET, got %s", r.Method)
 			}
-			if r.URL.Path != "/account/exports/exp-1" {
+			if r.URL.Path != "/test-account/account/exports/exp-1" {
 				t.Errorf("unexpected path: %s", r.URL.Path)
 			}
 

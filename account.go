@@ -7,7 +7,7 @@ import (
 )
 
 func (c *Client) GetAccountSettings(ctx context.Context) (*Account, error) {
-	endpointURL := c.BaseURL + "/account/settings"
+	endpointURL := c.AccountBaseURL + "/account/settings"
 
 	req, err := c.newRequest(ctx, http.MethodGet, endpointURL, nil)
 	if err != nil {
@@ -24,7 +24,7 @@ func (c *Client) GetAccountSettings(ctx context.Context) (*Account, error) {
 }
 
 func (c *Client) UpdateAccountEntropy(ctx context.Context, payload EntropyPayload) (*Account, error) {
-	endpointURL := c.BaseURL + "/account/entropy"
+	endpointURL := c.AccountBaseURL + "/account/entropy"
 
 	body := map[string]EntropyPayload{"entropy": payload}
 
@@ -43,7 +43,7 @@ func (c *Client) UpdateAccountEntropy(ctx context.Context, payload EntropyPayloa
 }
 
 func (c *Client) GetAccountJoinCode(ctx context.Context) (*JoinCode, error) {
-	endpointURL := c.BaseURL + "/account/join_code"
+	endpointURL := c.AccountBaseURL + "/account/join_code"
 
 	req, err := c.newRequest(ctx, http.MethodGet, endpointURL, nil)
 	if err != nil {
@@ -60,7 +60,7 @@ func (c *Client) GetAccountJoinCode(ctx context.Context) (*JoinCode, error) {
 }
 
 func (c *Client) UpdateAccountJoinCode(ctx context.Context, payload UpdateJoinCodePayload) error {
-	endpointURL := c.BaseURL + "/account/join_code"
+	endpointURL := c.AccountBaseURL + "/account/join_code"
 
 	body := map[string]UpdateJoinCodePayload{"account_join_code": payload}
 
@@ -74,7 +74,7 @@ func (c *Client) UpdateAccountJoinCode(ctx context.Context, payload UpdateJoinCo
 }
 
 func (c *Client) ResetAccountJoinCode(ctx context.Context) error {
-	endpointURL := c.BaseURL + "/account/join_code"
+	endpointURL := c.AccountBaseURL + "/account/join_code"
 
 	req, err := c.newRequest(ctx, http.MethodDelete, endpointURL, nil)
 	if err != nil {

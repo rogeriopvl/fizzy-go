@@ -7,7 +7,7 @@ import (
 )
 
 func (c *Client) CreateAccountExport(ctx context.Context) (*Export, error) {
-	endpointURL := c.BaseURL + "/account/exports"
+	endpointURL := c.AccountBaseURL + "/account/exports"
 
 	req, err := c.newRequest(ctx, http.MethodPost, endpointURL, nil)
 	if err != nil {
@@ -24,7 +24,7 @@ func (c *Client) CreateAccountExport(ctx context.Context) (*Export, error) {
 }
 
 func (c *Client) GetAccountExport(ctx context.Context, exportID string) (*Export, error) {
-	endpointURL := c.BaseURL + "/account/exports/" + exportID
+	endpointURL := c.AccountBaseURL + "/account/exports/" + exportID
 
 	req, err := c.newRequest(ctx, http.MethodGet, endpointURL, nil)
 	if err != nil {

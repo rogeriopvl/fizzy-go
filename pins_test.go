@@ -95,7 +95,7 @@ func TestGetMyPins(t *testing.T) {
 			if r.Method != http.MethodGet {
 				t.Errorf("expected GET, got %s", r.Method)
 			}
-			if r.URL.Path != "/my/pins" {
+			if r.URL.Path != "/test-account/my/pins" {
 				t.Errorf("unexpected path: %s", r.URL.Path)
 			}
 			if r.Header.Get("Authorization") != "Bearer test-token" {
