@@ -1,5 +1,10 @@
 # fizzy-go
 
+[![Tests](https://github.com/rogeriopvl/fizzy-go/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/rogeriopvl/fizzy-go/actions/workflows/tests.yml)
+[![Latest release](https://img.shields.io/github/v/release/rogeriopvl/fizzy-go?sort=semver)](https://github.com/rogeriopvl/fizzy-go/releases/latest)
+[![Commits per month](https://img.shields.io/github/commit-activity/m/rogeriopvl/fizzy-go)](https://github.com/rogeriopvl/fizzy-go/commits)
+[![Last commit](https://img.shields.io/github/last-commit/rogeriopvl/fizzy-go)](https://github.com/rogeriopvl/fizzy-go/commits)
+
 A Go client library for the [Fizzy](https://fizzy.do) API.
 
 ## Installation
