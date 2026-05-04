@@ -110,7 +110,7 @@ func TestUpdateMyTimezone(t *testing.T) {
 			if r.Method != http.MethodPatch {
 				t.Errorf("expected PATCH, got %s", r.Method)
 			}
-			if r.URL.Path != "/my/timezone" {
+			if r.URL.Path != "/test-account/my/timezone" {
 				t.Errorf("unexpected path: %s", r.URL.Path)
 			}
 

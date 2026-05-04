@@ -43,7 +43,7 @@ func (c *Client) CreateAccessToken(ctx context.Context, payload CreateAccessToke
 }
 
 func (c *Client) UpdateMyTimezone(ctx context.Context, timezoneName string) error {
-	endpointURL := c.BaseURL + "/my/timezone"
+	endpointURL := c.AccountBaseURL + "/my/timezone"
 
 	body := map[string]string{"timezone_name": timezoneName}
 
