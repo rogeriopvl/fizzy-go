@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2026-05-04
+
+### Fixed
+
+- fix(identity): route `UpdateMyTimezone` under `:account_slug` — the method was building its URL from `BaseURL`, which 302-redirects to `/session/menu` in production and yields 406 once the client follows the redirect. Same class of bug as the eight methods fixed in v1.2.1; this one was missed
+
 ## [1.2.1] - 2026-05-02
 
 ### Fixed
